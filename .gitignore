@@ -1,0 +1,16 @@
+# Code
+.vscode
+*venv/
+.env
+*.crt
+*.key
+
+# Windows system files
+Thumbs.db
+desktop.ini
+
+# MacOS system files
+.DS_Store
+.Spotlight-V100
+.Trashes
+._*
