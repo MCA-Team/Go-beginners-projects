@@ -14,7 +14,8 @@ func main() {
 	for {
 		if continueGame=="yes" {
 			numberToGuess := utilities.GenerateRandomNumber()
-			diff := utilities.SelectDifficulty(utilities.GetDifficulties())
+			choices := utilities.GetDifficulties()
+			diff := utilities.SelectDifficulty(choices)
 
 			utilities.GameSession(numberToGuess, userNumber, diff)
 			fmt.Print("\n")
