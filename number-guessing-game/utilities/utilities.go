@@ -3,12 +3,14 @@ package utilities
 import (
 	"fmt"
 	"math/rand/v2"
+	"time"
 )
 
 
 type diffInfos struct {
 	difficulty string
 	numberOfAttempts int
+	HighScore int
 }
 
 
@@ -18,14 +20,17 @@ func GetDifficulties() map[uint]diffInfos {
 	easy := diffInfos {
 		difficulty: "Easy",
 		numberOfAttempts: 10,
+		HighScore: 0,
 	}
 	medium := diffInfos {
 		difficulty: "Medium",
 		numberOfAttempts: 5,
+		HighScore: 0,
 	}
 	hard := diffInfos {
 		difficulty: "Hard",
 		numberOfAttempts: 3,
+		HighScore: 0,
 	}
 
 	choices[1] = easy
@@ -72,8 +77,11 @@ func GenerateRandomNumber() uint {
 }
 
 func GameSession(numberToGuess uint, userNumber uint, diff int) {
+	start := time.Now()
+	// fmt.Printf("Start time: %v\n", start)
+
 	for i := 0; i < diff; i++ {
-		fmt.Println(numberToGuess)
+		// fmt.Println(numberToGuess)
 		fmt.Print("\nEnter your guess: ")
 		fmt.Scan(&userNumber)
 		if userNumber == numberToGuess {
@@ -85,6 +93,11 @@ func GameSession(numberToGuess uint, userNumber uint, diff int) {
 			fmt.Printf("Incorrect! The number is greater than %v.\n", userNumber)
 		}
 	}
+	elapsedTime := time.Since(start)
+	fmt.Print("\n******************************\n")
+	fmt.Printf("Game elapsed time: %v\n", elapsedTime)
+	fmt.Print("******************************\n")
+
 	if numberToGuess != userNumber {
 		fmt.Print("\n##############################\n")
 		fmt.Printf("Sorry, you've used all your attempts. The correct number was %v.\n", numberToGuess)
