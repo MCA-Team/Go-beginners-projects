@@ -6,9 +6,23 @@ import (
 )
 
 func main() {
+	var userNumber uint
+	continueGame := "yes"
+
 	utilities.GreetUser()
-	fmt.Println(utilities.GetDifficulties())
-	fmt.Println(utilities.SelectDifficulty(utilities.GetDifficulties()))
+	
+	for {
+		if continueGame=="yes" {
+			numberToGuess := utilities.GenerateRandomNumber()
+			diff := utilities.SelectDifficulty(utilities.GetDifficulties())
+
+			utilities.GameSession(numberToGuess, userNumber, diff)
+			fmt.Print("\n")
+		} else if continueGame=="no"{
+			break
+		}
+		fmt.Println("Another game ? (yes/no)")
+		fmt.Scan(&continueGame)
+	}
+	
 }
-
-
