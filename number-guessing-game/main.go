@@ -8,16 +8,14 @@ import (
 func main() {
 	var userNumber uint
 	continueGame := "yes"
-
-	utilities.GreetUser()
-	choices := utilities.GetDifficulties()
+	difficultyLevels := utilities.GetDifficulties()
 	
 	for {
 		if continueGame=="yes" {
 			numberToGuess := utilities.GenerateRandomNumber()
-			t, diff := utilities.SelectDifficulty(choices)
-
-			utilities.GameSession(numberToGuess, userNumber, diff, t, choices)
+			difficultyID, numberofAttemps := utilities.SelectDifficulty(difficultyLevels)
+			utilities.GreetUser()
+			utilities.GameSession(numberToGuess, userNumber, numberofAttemps, difficultyID, difficultyLevels)
 			fmt.Print("\n")
 		} else if continueGame=="no"{
 			break
