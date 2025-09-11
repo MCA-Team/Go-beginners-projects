@@ -7,27 +7,27 @@ import (
 )
 
 
-type diffInfos struct {
+type difficultyInfos struct {
 	difficulty string
 	numberOfAttempts int
 	highScore int
 }
 
 
-func GetDifficulties() map[uint]diffInfos {
-	choices := make(map[uint]diffInfos)
+func GetDifficulties() map[uint]difficultyInfos {
+	choices := make(map[uint]difficultyInfos)
 
-	easy := diffInfos {
+	easy := difficultyInfos {
 		difficulty: "Easy",
 		numberOfAttempts: 10,
 		highScore: 10,
 	}
-	medium := diffInfos {
+	medium := difficultyInfos {
 		difficulty: "Medium",
 		numberOfAttempts: 5,
 		highScore: 5,
 	}
-	hard := diffInfos {
+	hard := difficultyInfos {
 		difficulty: "Hard",
 		numberOfAttempts: 3,
 		highScore: 3,
@@ -49,13 +49,13 @@ func GreetUser() {
 }
 
 
-func SelectDifficulty(difficulties map[uint]diffInfos) (uint, int) {
+func SelectDifficulty(difficulties map[uint]difficultyInfos) (uint, int) {
 	var choice uint
 
 	for {
 		fmt.Println("Please select the difficulty level:")
-		for diffID, diffInfos := range difficulties {
-			fmt.Printf("%v. %v (%v chances)\n", diffID, diffInfos.difficulty ,diffInfos.numberOfAttempts)
+		for difficultyID, difficultyInfos := range difficulties {
+			fmt.Printf("%v. %v (%v chances)\n", difficultyID, difficultyInfos.difficulty ,difficultyInfos.numberOfAttempts)
 		}
 
 		fmt.Print("\nEnter your choice: ")
@@ -77,19 +77,19 @@ func GenerateRandomNumber() uint {
 	return uint(rand.IntN(100)+1)
 }
 
-func GameSession(numberToGuess uint, userNumber uint, diff int, choice uint, choices map[uint]diffInfos) {
+func GameSession(numberToGuess uint, userNumber uint, numberofAttemps int, difficultyID uint, difficultyLevels map[uint]difficultyInfos) {
 	start := time.Now()
 	// fmt.Printf("Start time: %v\n", start)
 
-	for i := 0; i < diff; i++ {
+	for i := 0; i < numberofAttemps; i++ {
 		// fmt.Println(numberToGuess)
 		fmt.Print("\nEnter your guess: ")
 		fmt.Scan(&userNumber)
 		if userNumber == numberToGuess {
-			if i+1 < choices[choice].highScore {
-				temp := choices[choice]
+			if i+1 < difficultyLevels[difficultyID].highScore {
+				temp := difficultyLevels[difficultyID]
 				temp.highScore = i+1
-				choices[choice] = temp
+				difficultyLevels[difficultyID] = temp
 			}
 			fmt.Print("\n##############################\n")
 			fmt.Printf("Congratulations! You guessed the correct number in %v attempts.\n", i+1)
@@ -103,7 +103,7 @@ func GameSession(numberToGuess uint, userNumber uint, diff int, choice uint, cho
 	}
 	elapsedTime := time.Since(start)
 	fmt.Print("\n******************************\n")
-	fmt.Printf("%v level's high score is: %v\n", choices[choice].difficulty, choices[choice].highScore)
+	fmt.Printf("%v level's high score is: %v\n", difficultyLevels[difficultyID].difficulty, difficultyLevels[difficultyID].highScore)
 	fmt.Printf("Game elapsed time: %v\n", elapsedTime)
 	fmt.Print("******************************\n")
 
