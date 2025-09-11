@@ -10,14 +10,14 @@ func main() {
 	continueGame := "yes"
 
 	utilities.GreetUser()
+	choices := utilities.GetDifficulties()
 	
 	for {
 		if continueGame=="yes" {
 			numberToGuess := utilities.GenerateRandomNumber()
-			choices := utilities.GetDifficulties()
-			diff := utilities.SelectDifficulty(choices)
+			t, diff := utilities.SelectDifficulty(choices)
 
-			utilities.GameSession(numberToGuess, userNumber, diff)
+			utilities.GameSession(numberToGuess, userNumber, diff, t, choices)
 			fmt.Print("\n")
 		} else if continueGame=="no"{
 			break
