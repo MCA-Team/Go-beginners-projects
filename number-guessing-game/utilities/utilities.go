@@ -10,7 +10,7 @@ import (
 type diffInfos struct {
 	difficulty string
 	numberOfAttempts int
-	HighScore int
+	highScore int
 }
 
 
@@ -20,17 +20,17 @@ func GetDifficulties() map[uint]diffInfos {
 	easy := diffInfos {
 		difficulty: "Easy",
 		numberOfAttempts: 10,
-		HighScore: 0,
+		highScore: 10,
 	}
 	medium := diffInfos {
 		difficulty: "Medium",
 		numberOfAttempts: 5,
-		HighScore: 0,
+		highScore: 5,
 	}
 	hard := diffInfos {
 		difficulty: "Hard",
 		numberOfAttempts: 3,
-		HighScore: 0,
+		highScore: 3,
 	}
 
 	choices[1] = easy
@@ -49,14 +49,15 @@ func GreetUser() {
 }
 
 
-func SelectDifficulty(difficulties map[uint]diffInfos) int {
+func SelectDifficulty(difficulties map[uint]diffInfos) (uint, int) {
 	var choice uint
 
 	for {
 		fmt.Println("Please select the difficulty level:")
-		fmt.Println("1. Easy (10 chances)")
-		fmt.Println("2. Medium (5 chances)")
-		fmt.Println("3. Hard (3 chances)")
+		for diffID, diffInfos := range difficulties {
+			fmt.Printf("%v. %v (%v chances)\n", diffID, diffInfos.difficulty ,diffInfos.numberOfAttempts)
+		}
+
 		fmt.Print("\nEnter your choice: ")
 		fmt.Scan(&choice)
 		if (choice < 1) || (choice > 3) {
@@ -69,14 +70,14 @@ func SelectDifficulty(difficulties map[uint]diffInfos) int {
 			break
 		}
 	}
-	return difficulties[choice].numberOfAttempts
+	return choice, difficulties[choice].numberOfAttempts
 }
 
 func GenerateRandomNumber() uint {
 	return uint(rand.IntN(100)+1)
 }
 
-func GameSession(numberToGuess uint, userNumber uint, diff int) {
+func GameSession(numberToGuess uint, userNumber uint, diff int, choice uint, choices map[uint]diffInfos) {
 	start := time.Now()
 	// fmt.Printf("Start time: %v\n", start)
 
@@ -85,7 +86,14 @@ func GameSession(numberToGuess uint, userNumber uint, diff int) {
 		fmt.Print("\nEnter your guess: ")
 		fmt.Scan(&userNumber)
 		if userNumber == numberToGuess {
+			if i+1 < choices[choice].highScore {
+				temp := choices[choice]
+				temp.highScore = i+1
+				choices[choice] = temp
+			}
+			fmt.Print("\n##############################\n")
 			fmt.Printf("Congratulations! You guessed the correct number in %v attempts.\n", i+1)
+			fmt.Print("##############################\n")
 			break
 		} else if userNumber > numberToGuess {
 			fmt.Printf("Incorrect! The number is less than %v.\n", userNumber)
@@ -95,6 +103,7 @@ func GameSession(numberToGuess uint, userNumber uint, diff int) {
 	}
 	elapsedTime := time.Since(start)
 	fmt.Print("\n******************************\n")
+	fmt.Printf("%v level's high score is: %v\n", choices[choice].difficulty, choices[choice].highScore)
 	fmt.Printf("Game elapsed time: %v\n", elapsedTime)
 	fmt.Print("******************************\n")
 
