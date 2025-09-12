@@ -1,3 +1,4 @@
+// Packge main orders and implement the game logic by using the functions and struct types defined in the utilities package
 package main
 
 import (
