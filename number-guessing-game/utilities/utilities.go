@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"time"
+	"github.com/fxtlabs/primes"
 )
 
 // difficultyInfos is a struct type which modelizes what a difficulty level is; whith the difficulty name, its number of attempts and the high score related to the difficulty level.
@@ -13,6 +14,12 @@ type difficultyInfos struct {
 	numberOfAttempts int
 	highScore int
 }
+
+// maxGeneratedNumber is the maximum number that can be generated randomly.
+const maxGeneratedNumber = 100
+
+// minGeneratedNumber is the minimum number that can be generated randomly.
+const minGeneratedNumber = 1
 
 
 // GetDifficulties return a map where the key is the difficulty ID and the value is a struct type which defines all informations for a difficulty level.
@@ -83,7 +90,26 @@ func SelectDifficulty(difficulties map[uint]difficultyInfos) (uint, int) {
 
 // GenerateRandomNumber returns a random number between 1 and 100, based on math/rand/v2 package.
 func GenerateRandomNumber() uint {
-	return uint(rand.IntN(100)+1)
+	return uint(rand.IntN(maxGeneratedNumber)+minGeneratedNumber)
+}
+
+// hintIndicator provides hints to the user based on the number to guess.
+func hintIndicator(numberToGuess uint)  {
+	if numberToGuess % 2 == 0 {
+		fmt.Println("Hint: The number to guess is even.")
+	} else {
+		fmt.Println("Hint: The number to guess is odd.")
+	}
+
+	if numberToGuess < maxGeneratedNumber/2 {
+		fmt.Printf("Hint: The number to guess is less than %v.\n", maxGeneratedNumber/2)
+	} else {
+		fmt.Printf("Hint: The number to guess is greater than %v.\n", maxGeneratedNumber/2)
+	}
+
+	if primes.IsPrime(int(numberToGuess)) {
+		fmt.Println("Hint: The number to guess is a prime number.")
+	}
 }
 
 // GameSession implements the game session logic by considering the random number to guess, the number guessed by the user, the number of attempts, the difficulty ID and the difficulty levels map.
@@ -112,6 +138,7 @@ func GameSession(numberToGuess uint, userNumber uint, numberofAttemps int, diffi
 		} else if userNumber < numberToGuess {
 			fmt.Printf("Incorrect! The number is greater than %v.\n", userNumber)
 		}
+		hintIndicator(numberToGuess)
 	}
 	elapsedTime := time.Since(start)
 	fmt.Print("\n******************************\n")
