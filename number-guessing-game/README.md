@@ -3,7 +3,7 @@ Build a simple number guessing game to test your luck.
 
 <image src="https://store.ardanlabs.com/cdn/shop/products/gopher-patch01-02_c7b3aa27-3c46-4c4f-823f-580bfea20dde.jpg?v=1661445057" width=1000 center>
 
-[<img src="https://img.shields.io/badge/Go-1.25.0-blue.svg?logo=go">](https://go.dev/dl/)
+[<img src="https://img.shields.io/badge/Go-1.25.0-blue.svg?logo=go">](https://go.dev/dl/)   [<img src="https://img.shields.io/badge/github.com/fxtlabs/primes-v0-blue.svg?logo=go">](https://pkg.go.dev/github.com/fxtlabs/primes)
 
 
 
@@ -76,11 +76,14 @@ To make the game more interesting, you can add the following features:
 ---
 ---
 ## 3. Execution
-To execute this project, just run the following command in your terminal, being in the root of the directory :
+To execute this project, run the following command in your terminal in order ro install all external dependencies, being in the `./number-guessing-game/` folder of the directory :
+```sh
+$ make init
+```
+Then run the following command:
 ```sh
 $ go run .
 ```
-The CLI will ask you to enter your informations (first name, last name, e-mail, number of tickets you want) and will print a ticket for your registration.
 
 <br/>
 
@@ -94,12 +97,4 @@ $ go mod init booking-app
 ```
 - To install Go compiler, follow the instructions on the link below : <br/>
 [https://go.dev/doc/install](https://go.dev/doc/install)
-
-<br/>
-
-<br />
-
-## **CREDITS**
-
-**AUTHOR :** ADOTRI Frimpong
 
