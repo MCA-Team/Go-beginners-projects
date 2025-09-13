@@ -97,7 +97,7 @@ $ go mod init booking-app
 ```
 - To install Go compiler, follow the instructions on the link below : <br/>
 [https://go.dev/doc/install](https://go.dev/doc/install)
-- If you encounter a ``error, please run the following command:
+- If you encounter a `missing go.sum` error, please run the following command:
 ```sh
 $ go get number-guessing-game/utilities
 ```
