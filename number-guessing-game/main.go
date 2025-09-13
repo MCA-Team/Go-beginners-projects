@@ -14,8 +14,9 @@ func main() {
 	for {
 		if continueGame=="yes" {
 			numberToGuess := utilities.GenerateRandomNumber()
-			difficultyID, numberofAttemps := utilities.SelectDifficulty(difficultyLevels)
 			utilities.GreetUser()
+			difficultyID, numberofAttemps := utilities.SelectDifficulty(difficultyLevels)
+			
 			utilities.GameSession(numberToGuess, userNumber, numberofAttemps, difficultyID, difficultyLevels)
 			fmt.Print("\n")
 		} else if continueGame=="no"{
