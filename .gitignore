@@ -4,6 +4,7 @@
 .env
 *.crt
 *.key
+*.sum
 
 # Windows system files
 Thumbs.db
