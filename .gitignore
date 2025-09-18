@@ -5,6 +5,7 @@
 *.crt
 *.key
 *.sum
+*.db
 
 # Windows system files
 Thumbs.db
