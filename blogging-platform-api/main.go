@@ -1,12 +1,14 @@
 package main
 
 import (
+	"blogging-platform-api/models"
 	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
-	"blogging-platform-api/models"
-	// "net/http"
-	// "github.com/gin-gonic/gin"
 )
 
 
@@ -19,22 +21,32 @@ func main() {
 	if err != nil {
 		panic("Failed to connect to the dabase")
 	}
+
 	db.AutoMigrate(&models.Post{})
+
+	// post := models.CreatePost(db, "title", "the body", "the category", "['tag1', 'tag2', 'tag3']")
+	// fmt.Println(post)
 	
 
-	// router := gin.Default()
-	// router.GET("/", func(c *gin.Context) {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 	"message": "pong",
-	// 	})
-	// })
+	router := gin.Default()
+	router.POST("/posts", func(c *gin.Context) {
+		var inputData struct {
+			title string 
+			content string 
+			category string
+			tags string	
+		}
 
-	// router.GET("/ap", func(c *gin.Context) {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 	"apellidos": "Perez Casado",
-	// 	})
-	// })
-	// router.Run(":3000") // listen and serve on 0.0.0.0:3000
+		c.Bind(&inputData)
+
+		post := models.CreatePost(db, inputData.title, inputData.content, inputData.category, inputData.tags)
+		log.Println(inputData)
+		c.JSON(http.StatusOK, gin.H{
+		"post": post,
+		})
+	})
+
+	router.Run(":3000") // listen and serve on 0.0.0.0:3000
 
 	
 }
