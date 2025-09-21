@@ -1,8 +1,13 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"fmt"
 
-type Post struct {
+	"github.com/glebarez/sqlite"
+	"gorm.io/gorm"
+)
+
+type Article struct {
 	gorm.Model
 	Title string
 	Content string
@@ -10,17 +15,29 @@ type Post struct {
 	Tags []string `gorm:"serializer:json"`	// Serialization allows the dabase to store slice of stings correctly
 }
 
+var DB *gorm.DB
 
-// CreatePost creates a new post with passed title, body, category and tags elements in argument and commits it in the db in argument too through GORM.
-func CreatePost(db *gorm.DB, title, body, category string, tags []string) Post {
-	newPost := Post {
+func ConnectToDB() {
+	var err error
+	DB, err = gorm.Open(sqlite.Open("blog.db"), &gorm.Config{})
+	if err != nil {
+		panic("Failed to connect to the dabase")
+	} else {
+		fmt.Println("DB CONNECTION ESTABLISHED")
+	}
+	
+}
+
+// CreatePost creates a new post with passed title, body, category and tags elements in argument and commits it in the DB in argument too through GORM.
+func CreatePost(DB *gorm.DB, title, body, category string, tags []string) Article {
+	newArticle := Article {
 		Title: title,
 		Content: body,
 		Category: category,
 		Tags: tags,
 	}
-	if result := db.Create(&newPost); result.Error != nil {
+	if result := DB.Create(&newArticle); result.Error != nil {
 		panic(result.Error)
 	}
-	return newPost
+	return newArticle
 }
