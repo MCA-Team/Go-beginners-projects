@@ -143,7 +143,7 @@ The endpoint should return a `200 OK` status code with the blog post i.e.
 }
 ```
 
-or a `404 Not` Found status code if the blog post was not found.
+or a `404 Not Found` status code if the blog post was not found.
 
 #### Get All Blog Posts
 Get all blog posts using the GET method
