@@ -22,6 +22,8 @@ func main() {
 
 	router.POST("/posts", controllers.PostOneArticle)
 	router.GET("/posts", controllers.GetAllArticles)
+	router.GET("/posts/:articleID", controllers.GetSpecificArticle)
+	router.DELETE("/posts/:articleID", controllers.DeleteSpecificArticle)
 
 
 	router.Run(":3000") // listen and serve on 0.0.0.0:3000
