@@ -10,12 +10,25 @@ import (
 
 func PostOneArticle(c *gin.Context) {
 		var inputData models.Article
-		c.Bind(&inputData)
-		article := models.CreatePost(models.DB, inputData.Title, inputData.Content, inputData.Category, inputData.Tags)
 
+		if err := c.Bind(&inputData); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		newArticle := models.Article {
+			Title: inputData.Title,
+			Content: inputData.Content,
+			Category: inputData.Category,
+			Tags: inputData.Tags,
+		}
+		if result := models.DB.Create(&newArticle); result.Error != nil {
+			panic(result.Error)
+		}
 		c.JSON(http.StatusCreated, gin.H{
-		"Article": article,
+			"Article": newArticle,
 		})
+		
 	}
 
 
@@ -44,6 +57,12 @@ func DeleteSpecificArticle(c *gin.Context) {
 	var article models.Article
 	articleID := c.Param("articleID")
 	models.DB.Delete(&article, articleID)	// Deletion by primary key. ID being the default primary key
+
+	if err := c.ShouldBind(&article); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
 	fmt.Println(article)
 	c.String(http.StatusNoContent, "Article %v deleted !", articleID)
 }
