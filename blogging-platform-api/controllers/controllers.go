@@ -48,3 +48,25 @@ func DeleteSpecificArticle(c *gin.Context) {
 	c.String(http.StatusNoContent, "Article %v deleted !", articleID)
 }
 
+
+func UpdateOneElement(c *gin.Context) {
+	var inputData models.Article
+	var postToUpdate models.Article
+	articleID := c.Param("articleID")
+
+	c.Bind(&inputData)
+
+	// Finding the article to update
+	models.DB.First(&postToUpdate, articleID)
+
+	// Applying updates on the article to update
+	models.DB.Model(&postToUpdate).Updates(models.Article{
+		Title : inputData.Title,
+		Content : inputData.Content,
+		Category : inputData.Category,
+		Tags : inputData.Tags,
+	})
+	c.JSON(http.StatusOK, gin.H{
+	"Article": postToUpdate,
+	})
+}
