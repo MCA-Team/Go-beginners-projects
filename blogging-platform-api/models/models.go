@@ -9,8 +9,8 @@ import (
 
 type Article struct {
 	gorm.Model
-	Title string	`form:"title" json:"title" xml:"title" binding:"required"`
-	Content string	`form:"content" json:"content" xml:"content" binding:"required"`
+	Title string	`form:"title" json:"title" xml:"title"`
+	Content string	`form:"content" json:"content" xml:"content"`
 	Category string	`form:"category" json:"category" xml:"category"`
 	Tags []string `form:"tags" json:"tags" xml:"tags" gorm:"serializer:json"`	// Serialization allows the dabase to store slice of stings correctly
 }
