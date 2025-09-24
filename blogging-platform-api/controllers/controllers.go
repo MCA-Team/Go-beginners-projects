@@ -4,49 +4,55 @@ import (
 	"blogging-platform-api/models"
 	"fmt"
 	"net/http"
-
+	"errors"
+	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
 )
 
 func PostOneArticle(c *gin.Context) {
-		var inputData models.Article
+	var inputData models.Article
 
-		if err := c.Bind(&inputData); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		newArticle := models.Article {
-			Title: inputData.Title,
-			Content: inputData.Content,
-			Category: inputData.Category,
-			Tags: inputData.Tags,
-		}
-		if result := models.DB.Create(&newArticle); result.Error != nil {
-			panic(result.Error)
-		}
-		c.JSON(http.StatusCreated, gin.H{
-			"Article": newArticle,
-		})
-		
+	if err := c.ShouldBind(&inputData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	newArticle := models.Article {
+		Title: inputData.Title,
+		Content: inputData.Content,
+		Category: inputData.Category,
+		Tags: inputData.Tags,
+	}
+	if result := models.DB.Create(&newArticle); result.Error != nil {
+		panic(result.Error)
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		"Article": newArticle,
+	})
+	
+}
 
 
 func GetAllArticles(c *gin.Context) {
-		var articles []models.Article
-		models.DB.Find(&articles)
+	var articles []models.Article
+	models.DB.Find(&articles)
 
-		c.JSON(http.StatusOK, gin.H{
-		"Articles": articles,
-		})
-	}
+	c.JSON(http.StatusOK, gin.H{
+	"Articles": articles,
+	})
+}
 
 
 func GetSpecificArticle(c *gin.Context) {
 	var article models.Article
 	articleID := c.Param("articleID")
-	models.DB.First(&article, articleID)	// Retrieval by primary key. ID being the default primary key
-	fmt.Println(article)
+	
+	
+	if err := models.DB.First(&article, articleID).Error; errors.Is(err, gorm.ErrRecordNotFound) {	// Retrieval of the article by primary key. ID being the default primary key
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Article with ID '%v' not found", articleID)})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"Articles": article,
 		})
@@ -56,15 +62,15 @@ func GetSpecificArticle(c *gin.Context) {
 func DeleteSpecificArticle(c *gin.Context) {
 	var article models.Article
 	articleID := c.Param("articleID")
-	models.DB.Delete(&article, articleID)	// Deletion by primary key. ID being the default primary key
 
-	if err := c.ShouldBind(&article); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	fmt.Println(article)
+	if err := models.DB.First(&article, articleID).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Article with ID '%v' not found", articleID)})
 		return
 	}
 
-	fmt.Println(article)
-	c.String(http.StatusNoContent, "Article %v deleted !", articleID)
+	models.DB.Unscoped().Delete(&article, articleID)	// PERMANENT deletion by primary key. ID being the default primary key (Omit `Unscoped()` statement to avoid permanent deletion)
+	c.String(http.StatusNoContent, "Article %v deleted !", articleID)	// No body response returned for 204 status 'No content' code
 }
 
 
@@ -73,10 +79,16 @@ func UpdateOneElement(c *gin.Context) {
 	var postToUpdate models.Article
 	articleID := c.Param("articleID")
 
-	c.Bind(&inputData)
+	// c.Bind(&inputData)
 
-	// Finding the article to update
-	models.DB.First(&postToUpdate, articleID)
+	if err := models.DB.First(&postToUpdate, articleID).Error; errors.Is(err, gorm.ErrRecordNotFound) {	// Finding the article to update
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	} else if err := c.ShouldBind(&inputData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	
 
 	// Applying updates on the article to update
 	models.DB.Model(&postToUpdate).Updates(models.Article{
