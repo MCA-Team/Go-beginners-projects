@@ -17,13 +17,10 @@ func PostOneArticle(c *gin.Context) {
 	decoder := json.NewDecoder(c.Request.Body)
 	decoder.DisallowUnknownFields() // ❗ Forbid unknown fields
 
-	if err := decoder.Decode(&inputData); err != nil {	// Handling error for unknows fields
+	if err := decoder.Decode(&inputData); err != nil {	// Handling error for unknows fields and incorrect Model binding
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": fmt.Sprintf("Invalid JSON: %v", err),
 		})
-		return
-	} else if err := c.ShouldBind(&inputData); err != nil {	// Handling error for incompatible model binding
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
@@ -96,14 +93,11 @@ func UpdateOneElement(c *gin.Context) {
 	if err := models.DB.First(&postToUpdate, articleID).Error; errors.Is(err, gorm.ErrRecordNotFound) {	// Finding the article to update
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
-	} else if err := c.ShouldBind(&inputData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	} else if err := decoder.Decode(&inputData); err != nil {	// Handling error for unknows fields and incorrect Model binding
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("Invalid JSON: %v", err),
+		})
 		return
-	// } else if err := decoder.Decode(&inputData); err != nil {	// Handling error for unknows fields
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"error": fmt.Sprintf("Invalid JSON: %v", err),
-	// 	})
-	// 	return
 	}
 	
 
