@@ -3,6 +3,7 @@ package controllers
 import (
 	"blogging-platform-api/models"
 	"fmt"
+	"encoding/json"
 	"net/http"
 	"errors"
 	"gorm.io/gorm"
@@ -12,8 +13,17 @@ import (
 func PostOneArticle(c *gin.Context) {
 	var inputData models.Article
 
-	if err := c.ShouldBind(&inputData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Strict JSON decoding
+	decoder := json.NewDecoder(c.Request.Body)
+	decoder.DisallowUnknownFields() // ❗ Forbid unknown fields
+
+	if err := decoder.Decode(&inputData); err != nil {	// Handling error for unknows fields
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("Invalid JSON: %v", err),
+		})
+		return
+	} else if err := c.ShouldBind(&inputData); err != nil {	// Handling error for incompatible model binding
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
@@ -78,8 +88,10 @@ func UpdateOneElement(c *gin.Context) {
 	var inputData models.Article
 	var postToUpdate models.Article
 	articleID := c.Param("articleID")
+	// Strict JSON decoding
+	decoder := json.NewDecoder(c.Request.Body)
+	decoder.DisallowUnknownFields() // ❗ Forbid unknown fields
 
-	// c.Bind(&inputData)
 
 	if err := models.DB.First(&postToUpdate, articleID).Error; errors.Is(err, gorm.ErrRecordNotFound) {	// Finding the article to update
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -87,6 +99,11 @@ func UpdateOneElement(c *gin.Context) {
 	} else if err := c.ShouldBind(&inputData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	// } else if err := decoder.Decode(&inputData); err != nil {	// Handling error for unknows fields
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"error": fmt.Sprintf("Invalid JSON: %v", err),
+	// 	})
+	// 	return
 	}
 	
 
