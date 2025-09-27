@@ -16,9 +16,9 @@ type Article struct {
 
 var DB *gorm.DB
 
-func ConnectToDB() {
+func ConnectToDB(DB_path string) {
 	var err error
-	DB, err = gorm.Open(sqlite.Open("blog.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open(DB_path), &gorm.Config{})
 	if err != nil {
 		panic("Failed to connect to the dabase")
 	} else {
