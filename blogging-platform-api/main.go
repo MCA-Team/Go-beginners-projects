@@ -13,7 +13,7 @@ import (
 func main() {
 	fmt.Println("BLOGGING PLATFORM API")
 
-	models.ConnectToDB()
+	models.ConnectToDB("blog.db")
 	models.DB.AutoMigrate(&models.Article{})
 	
 	// query := models.DB.Find(&models.Post{})
