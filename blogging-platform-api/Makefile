@@ -8,6 +8,6 @@ help:
 init: ## Install external dependencies to run this project
 	@echo "\nInstalation of external dependencies...\n"
 	@go get gorm.io/gorm
-# 	@go get gorm.io/driver/sqlite
 	@go get github.com/glebarez/sqlite
 	@go get github.com/gin-gonic/gin
+	@go get github.com/stretchr/testify/assert
